@@ -1,29 +1,19 @@
-version: '2'
+version: "2.4"
 volumes:
-    config:
-    mosquitto:
+  config: {}
 services:
   homeassistant:
-    build: homeassistant
+    build:
+      context: homeassistant
     ports:
-      - 80:8123
+      - "51827:51827"
+      - "80:8123"
+    expose:
+      - 51827
+    devices:
+      - "/dev:/dev"
+    restart: always
+    volumes:
+      - "config:/config"
     privileged: true
-    volumes:
-      - 'config:/config'
-    restart: always
-  mqtt:
-    build: mqtt
-    ports:
-      - "1883:1883"
-    restart: always
-    volumes:
-      - mosquitto:/mosquitto/data
-  hass-configurator:
-    image: "causticlab/hass-configurator-docker:latest"
-    restart: always
-    ports:
-      - "3218:3218"
-    volumes:
-      - 'config:/hass-config'
-    environment:
-      - HC_BASEPATH=/hass-config
+    network_mode: host
